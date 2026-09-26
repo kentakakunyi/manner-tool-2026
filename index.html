@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="結婚・出産・葬儀など、冠婚葬祭のお金とマナーの目安をかんたんに確認できる無料ガイド。">
+<title>これ、いくら？これ、どうする？｜冠婚葬祭マナー・金額ガイド</title>
+<style>
+:root{--bg:#f5f7fb;--card:#fff;--ink:#172033;--muted:#667085;--line:#e5e7eb;--blue:#2563eb}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Noto Sans JP","Yu Gothic",Meiryo,sans-serif;background:var(--bg);color:var(--ink);line-height:1.75}
+.container{width:min(960px,calc(100% - 28px));margin:auto}
+header{background:#111827;color:#fff;padding:40px 0 46px}.logo{font-weight:800;letter-spacing:.08em;font-size:14px}
+h1{font-size:clamp(28px,6vw,46px);line-height:1.25;margin:12px 0}.lead{color:#dbe3ef;max-width:700px}
+.search{display:flex;gap:8px;margin-top:22px}.search input{flex:1;border:0;border-radius:12px;padding:14px;font-size:16px}.search button{border:0;border-radius:12px;padding:0 18px;font-weight:700}
+main{padding:28px 0 60px}.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px;margin-bottom:18px;box-shadow:0 5px 20px rgba(16,24,40,.04)}
+h2{font-size:21px;margin:0 0 14px}h3{font-size:17px;margin:20px 0 6px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.cat,.option{border:1px solid var(--line);border-radius:13px;background:#fff;text-align:left;cursor:pointer}
+.cat{padding:17px}.cat:hover,.option:hover{border-color:#9dbcf7;background:#eff6ff}.cat strong{display:block;font-size:17px}.cat span{font-size:13px;color:var(--muted)}
+.question{display:none;margin-top:25px}.question.active{display:block}.options{display:grid;gap:10px}.option{padding:14px;font-size:15px}
+.result{display:none;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:16px;padding:20px;margin-top:18px}.result.show{display:block}
+.pill{display:inline-block;background:#eff6ff;color:#1d4ed8;padding:3px 9px;border-radius:999px;font-size:12px;font-weight:700}.amount{font-size:38px;font-weight:900}
+.note{color:var(--muted);font-size:13px}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:15px}.btn{border:0;border-radius:10px;padding:11px 15px;font-weight:700;cursor:pointer;background:#111827;color:#fff}.btn.secondary{background:#eef2f7;color:#172033}
+details{border-top:1px solid var(--line);padding:13px 0}details:first-child{border-top:0}
+.notice{background:#fff7ed;border:1px solid #fed7aa;padding:13px;border-radius:12px;font-size:13px}
+footer{border-top:1px solid var(--line);padding:28px 0 45px;color:var(--muted);font-size:12px}
+@media(max-width:620px){.grid{grid-template-columns:1fr}.container{width:calc(100% - 22px)}header{padding:32px 0 38px}.card{padding:18px}.search button{padding:0 13px}}
+</style>
+</head>
+<body>
+<header><div class="container">
+<div class="logo">これ、いくら？これ、どうする？</div>
+<h1>冠婚葬祭の「これ、どうする？」を<br>サクッと確認。</h1>
+<p class="lead">ご祝儀・出産祝い・香典など、迷いやすい金額と基本マナーを、かんたんな質問でチェックできます。</p>
+<div class="search"><input id="search" type="search" placeholder="例：香典、結婚、出産祝い"><button onclick="doSearch()">検索</button></div>
+</div></header>
+
+<main class="container">
+<section class="card" id="checker">
+<h2>まずはカテゴリーを選ぶ</h2>
+<div class="grid">
+<button class="cat" onclick="start('wedding')"><strong>💍 結婚・ご祝儀</strong><span>友人・同僚・親族など</span></button>
+<button class="cat" onclick="start('baby')"><strong>👶 出産・子ども</strong><span>出産祝い・入学祝いなど</span></button>
+<button class="cat" onclick="start('funeral')"><strong>🕊️ 葬儀・香典</strong><span>香典の金額・渡し方など</span></button>
+<button class="cat" onclick="start('other')"><strong>🎁 その他のお祝い</strong><span>新築・昇進・退職など</span></button>
+</div>
+<div id="questions" class="question">
+<h2 id="qtitle"></h2><div id="qbody"></div>
+<div id="result" class="result"><span class="pill">目安</span><div class="amount" id="amount"></div><div id="reason"></div>
+<p class="note">※地域・年齢・関係性・家族間の慣習などで異なります。最終的には相手との関係や周囲の慣例を優先してください。</p>
+<div class="actions"><button class="btn" onclick="shareResult()">この結果を共有</button><button class="btn secondary" onclick="resetTool()">もう一度やる</button></div>
+</div></div>
+</section>
+
+<section class="card"><h2>金額だけ先に見る</h2><div class="grid">
+<div><h3>結婚・ご祝儀</h3><p><strong>友人・同僚：</strong>3万円前後<br><strong>親族：</strong>3万円〜10万円程度が目安</p></div>
+<div><h3>出産祝い</h3><p><strong>友人・知人：</strong>3,000〜10,000円程度<br><strong>親族：</strong>10,000〜30,000円程度</p></div>
+<div><h3>香典</h3><p><strong>知人・同僚：</strong>3,000〜10,000円程度<br><strong>親族：</strong>10,000〜30,000円程度が一例</p></div>
+<div><h3>その他のお祝い</h3><p>相手との関係性と祝い事の種類で変わります。無理のない範囲で選びましょう。</p></div>
+</div></section>
+
+<section class="card"><h2>よくある疑問</h2>
+<details><summary>ご祝儀は新札じゃないとダメ？</summary><p>絶対ではありませんが、結婚祝いでは新札を用意するのが一般的です。</p></details>
+<details><summary>香典に新札は使わないほうがいい？</summary><p>あらかじめ準備していた印象を避けるため、新札をそのまま使わないのが一般的です。</p></details>
+<details><summary>金額に迷ったらどうする？</summary><p>同じ関係性の人がいる場合は、周囲と金額を合わせるのが無難です。地域や家族の慣習も確認しましょう。</p></details>
+<details><summary>このサイトの金額は絶対？</summary><p>いいえ。あくまで一般的な目安です。年代・地域・相手との関係などで変わります。</p></details>
+</section>
+
+<section class="card"><h2>このサイトについて</h2><p>「これ、いくら？これ、どうする？」は、冠婚葬祭で急に必要になる金額の目安や基本マナーを、できるだけ分かりやすく確認するための無料ガイドです。</p>
+<div class="notice">掲載内容は一般的な目安であり、法律・専門家による個別の助言ではありません。地域や家庭の慣習によって異なる場合があります。</div></section>
+</main>
+
+<footer><div class="container">© 2026 これ、いくら？これ、どうする？<br>本サイトの情報は一般的な目安です。</div></footer>
+
+<script>
+const data={
+wedding:{title:"💍 結婚・ご祝儀",questions:[
+{q:"あなたとの関係は？",opts:[["友人・同僚","friend"],["兄弟姉妹","sibling"],["親・祖父母など近い親族","close"],["その他の親族","relative"]]},
+{q:"結婚式・披露宴に出席しますか？",opts:[["出席する","attend"],["出席しない","absent"]]}]},
+baby:{title:"👶 出産祝い",questions:[
+{q:"あなたとの関係は？",opts:[["友人・知人","friend"],["同僚","coworker"],["兄弟姉妹など親族","relative"],["その他","other"]]}]},
+funeral:{title:"🕊️ 香典",questions:[
+{q:"あなたとの関係は？",opts:[["友人・知人","friend"],["会社関係・同僚","coworker"],["親族","relative"],["特に近い親族","close"]]}]},
+other:{title:"🎁 その他のお祝い",questions:[
+{q:"どんなお祝いですか？",opts:[["新築・引っ越し祝い","home"],["昇進・就職祝い","career"],["退職祝い","retire"],["入学・卒業祝い","school"]]},
+{q:"相手との関係は？",opts:[["友人・知人","friend"],["同僚","coworker"],["親族","relative"]]}]}
+};
+let state={type:null,step:0,answers:[]};
+function start(type){state={type,step:0,answers:[]};document.getElementById("questions").classList.add("active");document.getElementById("result").classList.remove("show");renderQuestion();document.getElementById("questions").scrollIntoView({behavior:"smooth"});}
+function renderQuestion(){const d=data[state.type],q=d.questions[state.step];document.getElementById("qtitle").textContent=d.title+"｜"+q.q;document.getElementById("qbody").innerHTML='<div class="options">'+q.opts.map((x,i)=>'<button class="option" onclick="answer('+i+')">'+x[0]+'</button>').join("")+'</div>';}
+function answer(i){const d=data[state.type],q=d.questions[state.step];state.answers[state.step]=q.opts[i][1];state.step++;if(state.step<d.questions.length){renderQuestion();return}showResult();}
+function showResult(){const a=state.answers,t=state.type;let amount="",reason="";
+if(t==="wedding"){amount=a[1]==="absent"?((a[0]==="friend"||a[0]==="sibling")?"5,000〜10,000円":"10,000〜30,000円"):((a[0]==="friend"||a[0]==="sibling")?"30,000円":"30,000〜100,000円");reason="結婚式・披露宴への出席有無と関係性をもとにした一般的な目安です。";}
+if(t==="baby"){amount=(a[0]==="friend"||a[0]==="coworker")?"3,000〜10,000円":"10,000〜30,000円";reason="出産祝いは関係性によって幅があります。";}
+if(t==="funeral"){amount=(a[0]==="friend"||a[0]==="coworker")?"3,000〜10,000円":(a[0]==="relative"?"10,000〜30,000円":"30,000〜100,000円");reason="香典は故人との関係性や地域・家族の慣習で大きく異なります。";}
+if(t==="other"){const base=a[1]==="relative"?10000:5000;if(a[0]==="home")amount=base.toLocaleString()+"〜30,000円";else if(a[0]==="career")amount=base.toLocaleString()+"〜20,000円";else if(a[0]==="retire")amount=base.toLocaleString()+"〜10,000円";else amount=base.toLocaleString()+"〜10,000円";reason="お祝いの種類と関係性をもとにした一般的な目安です。";}
+document.getElementById("amount").textContent=amount;document.getElementById("reason").textContent=reason;document.getElementById("qbody").innerHTML="";document.getElementById("qtitle").textContent=data[t].title+"｜結果";document.getElementById("result").classList.add("show");}
+function resetTool(){document.getElementById("questions").classList.remove("active");document.getElementById("result").classList.remove("show");document.getElementById("checker").scrollIntoView({behavior:"smooth"});}
+function shareResult(){if(navigator.share){navigator.share({title:"これ、いくら？これ、どうする？",text:"冠婚葬祭の金額目安："+document.getElementById("amount").textContent,url:location.href}).catch(()=>{});}else if(navigator.clipboard){navigator.clipboard.writeText(location.href);alert("サイトURLをコピーしました！");}else{prompt("URLをコピーしてください",location.href);}}
+function doSearch(){const q=document.getElementById("search").value.trim();if(!q)return;const map=[["結婚","wedding"],["ご祝儀","wedding"],["出産","baby"],["子ども","baby"],["香典","funeral"],["葬儀","funeral"],["新築","other"],["昇進","other"],["退職","other"],["入学","other"],["卒業","other"]];const hit=map.find(x=>q.includes(x[0]));if(hit)start(hit[1]);else alert("「結婚」「ご祝儀」「出産」「香典」「葬儀」「新築」などで検索できます。");}
+document.getElementById("search").addEventListener("keydown",e=>{if(e.key==="Enter")doSearch();});
+</script>
+</body></html>
